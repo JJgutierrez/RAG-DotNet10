@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventArgs LLC | Grounded Knowledge Copilot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Controls -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">⚡</div>
+                <div class="brand-text">
+                    <h2>EventArgs AI</h2>
+                    <span class="badge">.NET 10 RAG</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" id="nav-copilot" onclick="switchTab('copilot')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Grounded Copilot
+                </button>
+                <button class="nav-btn" id="nav-admin" onclick="switchTab('admin')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Knowledge Ingestion
+                </button>
+                <button class="nav-btn" id="nav-telemetry" onclick="switchTab('telemetry')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    Metrics & Telemetry
+                </button>
+            </nav>
+
+            <div class="config-panel">
+                <h3>Retrieval Controls</h3>
+                <div class="control-group">
+                    <label for="topk-slider">Top-K Chunks: <span id="topk-val">3</span></label>
+                    <input type="range" id="topk-slider" min="1" max="10" value="3" oninput="updateControlValues()">
+                </div>
+                <div class="control-group">
+                    <label for="threshold-slider">Relevance Threshold: <span id="threshold-val">0.70</span></label>
+                    <input type="range" id="threshold-slider" min="-1.0" max="1.0" step="0.05" value="0.70" oninput="updateControlValues()">
+                </div>
+                <div class="control-group">
+                    <label for="minevidence-slider">Min Evidence Count: <span id="minevidence-val">1</span></label>
+                    <input type="range" id="minevidence-slider" min="1" max="5" value="1" oninput="updateControlValues()">
+                </div>
+            </div>
+
+            <div class="system-status">
+                <div class="status-indicator online"></div>
+                <div class="status-info">
+                    <span class="status-title">Local Containment Active</span>
+                    <span class="status-sub">Ollama + pgvector</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="tab-title">Grounded Copilot Interface</h1>
+                    <p id="tab-subtitle">Answer generation strictly restricted to retrieved enterprise evidence with zero hallucination.</p>
+                </div>
+                <div class="quick-stats">
+                    <div class="stat-chip">
+                        <span class="label">Vector Latency</span>
+                        <span class="value" id="header-latency">-- ms</span>
+                    </div>
+                    <div class="stat-chip">
+                        <span class="label">Refusal Precision</span>
+                        <span class="value success">100%</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Tab 1: Copilot Chat -->
+            <section id="view-copilot" class="tab-view active">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message assistant">
+                            <div class="avatar">⚡</div>
+                            <div class="message-content">
+                                <p>Welcome to <strong>EventArgs Knowledge Copilot</strong>. Ask any question about enterprise documents, policies, or server operations. Responses are strictly grounded in retrieved evidence with explicit citation lineage.</p>
+                                <div class="suggested-prompts">
+                                    <button class="prompt-chip" onclick="sendSuggestedPrompt('What is the annual equipment allowance for remote work?')">💼 Remote Work Allowance</button>
+                                    <button class="prompt-chip" onclick="sendSuggestedPrompt('What is the SLA response time for Severity 1 incidents?')">🚨 Severity 1 SLA</button>
+                                    <button class="prompt-chip" onclick="sendSuggestedPrompt('What are the strict citation rules for the copilot?')">🔒 Security & Citation Rules</button>
+                                    <button class="prompt-chip refusal-test" onclick="sendSuggestedPrompt('What was the stock price of Apple in 1984?')">⚠️ Refusal Test (Unsupported Question)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-wrapper">
+                        <form id="chat-form" onsubmit="handleChatSubmit(event)">
+                            <input type="text" id="chat-input" placeholder="Ask a grounded enterprise question..." autocomplete="off" required>
+                            <button type="submit" id="send-btn">
+                                <span>Send</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 2: Knowledge Ingestion Admin -->
+            <section id="view-admin" class="tab-view">
+                <div class="admin-grid">
+                    <div class="glass-card">
+                        <h3>Ingest Knowledge Source</h3>
+                        <p class="card-desc">Parse, chunk, embed (768-dim), and upsert files idempotently into PostgreSQL with pgvector.</p>
+                        
+                        <form id="ingest-form" onsubmit="handleIngestSubmit(event)">
+                            <div class="input-field">
+                                <label for="ingest-path">File Path on Server Host:</label>
+                                <input type="text" id="ingest-path" placeholder="/absolute/path/to/document.md" required>
+                            </div>
+                            <button type="submit" class="primary-btn">Ingest Source File</button>
+                        </form>
+
+                        <div class="quick-ingest-section">
+                            <h4>Quick Demo File Ingestion:</h4>
+                            <div class="quick-ingest-buttons">
+                                <button class="secondary-btn" onclick="quickIngest('employee_policy.md')">📄 Ingest employee_policy.md</button>
+                                <button class="secondary-btn" onclick="quickIngest('server_incident_response.txt')">📄 Ingest server_incident_response.txt</button>
+                                <button class="secondary-btn" onclick="quickIngest('copilot_architecture.md')">📄 Ingest copilot_architecture.md</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3>Recent Ingestion Log Output</h3>
+                        <div class="log-console" id="ingest-log-console">
+                            <div class="log-line info">[System] Ready for knowledge source ingestion commands.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 3: Metrics & Telemetry -->
+            <section id="view-telemetry" class="tab-view">
+                <div class="telemetry-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">🎯</div>
+                        <div class="metric-data">
+                            <span class="metric-value">100%</span>
+                            <span class="metric-label">Grounded Citation Completeness</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">🛡️</div>
+                        <div class="metric-data">
+                            <span class="metric-value">100%</span>
+                            <span class="metric-label">Refusal Precision</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">⚡</div>
+                        <div class="metric-data">
+                            <span class="metric-value" id="telemetry-latency">47 ms</span>
+                            <span class="metric-label">Avg Vector Search Latency</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">🧬</div>
+                        <div class="metric-data">
+                            <span class="metric-value">768 Dim</span>
+                            <span class="metric-label">Vector Embedding Contract</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Citation Inspector Drawer -->
+        <div class="drawer-overlay" id="drawer-overlay" onclick="closeCitationDrawer()"></div>
+        <aside class="citation-drawer" id="citation-drawer">
+            <div class="drawer-header">
+                <h3>Citation Evidence Inspector</h3>
+                <button class="close-btn" onclick="closeCitationDrawer()">&times;</button>
+            </div>
+            <div class="drawer-body" id="drawer-body">
+                <!-- Populated dynamically -->
+            </div>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

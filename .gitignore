@@ -1,0 +1,24 @@
+# .NET & C# build outputs
+bin/
+obj/
+out/
+*.user
+*.userosscache
+*.sln.docstates
+
+# IDE & Editor files
+.vs/
+.idea/
+.vscode/
+*.swp
+*~
+
+# Environment & local data
+appsettings.Development.json
+appsettings.Local.json
+*.env
+*.log
+
+# OS generated
+.DS_Store
+Thumbs.db

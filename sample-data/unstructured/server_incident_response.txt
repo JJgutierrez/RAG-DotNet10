@@ -1,0 +1,10 @@
+EventArgs Infrastructure Operations: Incident Response Standard Operating Procedure
+
+Incident Severity Levels:
+- Severity 1 (Critical): Complete outage of core production APIs or client-facing knowledge copilots. SLA response time: 15 minutes.
+- Severity 2 (Major): Partial degradation of retrieval performance or elevated refusal rate (>5%). SLA response time: 1 hour.
+- Severity 3 (Minor): Non-blocking administrative issues or minor telemetry logging delays. SLA response time: 24 hours.
+
+Escalation Contacts:
+- On-Call Site Reliability Engineer (SRE): sre-oncall@eventargs.com | Phone: +1-555-0199
+- Lead AI Infrastructure Engineer: ai-ops@eventargs.com

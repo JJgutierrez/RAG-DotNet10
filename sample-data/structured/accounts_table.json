@@ -1,0 +1,18 @@
+[
+  {
+    "accountId": "ACC-1001",
+    "companyName": "Acme Enterprise Solutions",
+    "planTier": "Enterprise Platinum",
+    "accountManager": "Sarah Jenkins",
+    "supportedSeats": 250,
+    "slaTier": "24/7 Priority SLA"
+  },
+  {
+    "accountId": "ACC-1002",
+    "companyName": "Global Logistics Corp",
+    "planTier": "Standard Professional",
+    "accountManager": "David Miller",
+    "supportedSeats": 45,
+    "slaTier": "Standard Business Hours SLA"
+  }
+]
